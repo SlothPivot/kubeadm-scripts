@@ -7,6 +7,7 @@ set -euxo pipefail
 # Variable Declaration
 
 KUBERNETES_VERSION="1.28.1-00"
+ETHERNET_INTERFACE="ens160"
 
 # disable swap
 sudo swapoff -a
@@ -70,7 +71,7 @@ sudo apt-get install -y kubelet="$KUBERNETES_VERSION" kubectl="$KUBERNETES_VERSI
 sudo apt-get update -y
 sudo apt-get install -y jq
 
-local_ip="$(ip --json addr show eth0 | jq -r '.[0].addr_info[] | select(.family == "inet") | .local')"
+local_ip="$(ip --json addr show "$ETHERNET_INTERFACE" | jq -r '.[0].addr_info[] | select(.family == "inet") | .local')"
 cat > /etc/default/kubelet << EOF
 KUBELET_EXTRA_ARGS=--node-ip=$local_ip
 EOF
